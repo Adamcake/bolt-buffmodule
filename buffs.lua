@@ -25,54 +25,52 @@ return {
     for i = startindex, vertexcount, verticesperimage do
       if skipnumber then
         skipnumber = false
-        goto continue
-      end
-
-      local ax, ay, aw, ah, _, _ = event:vertexatlasdetails(i)
-      local u, v = event:vertexuv(i)
-      if u == nil or v == nil then
-        local x, y = event:vertexxy(i + 2)
-        local fr, fg, fb = event:vertexcolour(i)
-        if x == pxleft and y == pxtop and roundcol(fr) == boxr and roundcol(fg) == boxg and roundcol(fb) == boxb then
-          return true, buffnumber, parensnumber
+      else
+        local ax, ay, aw, ah, _, _ = event:vertexatlasdetails(i)
+        local u, v = event:vertexuv(i)
+        if u == nil or v == nil then
+          local x, y = event:vertexxy(i + 2)
+          local fr, fg, fb = event:vertexcolour(i)
+          if x == pxleft and y == pxtop and roundcol(fr) == boxr and roundcol(fg) == boxg and roundcol(fb) == boxb then
+            return true, buffnumber, parensnumber
+          end
+          return false
         end
-        return false
-      end
 
-      if ah <= 6 then return false end
-      local char = this.buffchars[event:texturedata(ax, ay + 6, aw * 4)]
-      if type(char) == "table" then
-        char = char[event:texturedata(ax, ay + 1, aw * 4)]
-      end
-      if not char then return false end
-      skipnumber = true
+        if ah <= 6 then return false end
+        local char = this.buffchars[event:texturedata(ax, ay + 6, aw * 4)]
+        if type(char) == "table" then
+          char = char[event:texturedata(ax, ay + 1, aw * 4)]
+        end
+        if not char then return false end
+        skipnumber = true
 
-      if type(char) == "number" then
-        if parensnumber ~= nil then
-          parensnumber = char + (parensnumber * 10)
-        elseif buffnumber ~= nil then
-          buffnumber = char + (buffnumber * 10)
-        else
-          buffnumber = char
+        if type(char) == "number" then
+          if parensnumber ~= nil then
+            parensnumber = char + (parensnumber * 10)
+          elseif buffnumber ~= nil then
+            buffnumber = char + (buffnumber * 10)
+          else
+            buffnumber = char
+          end
+        end
+
+        if char == 'h' then
+          if parensnumber ~= nil then
+            parensnumber = parensnumber * 3600
+          elseif buffnumber ~= nil then
+            buffnumber = buffnumber * 3600
+          end
+        elseif char == 'm' then
+          if parensnumber ~= nil then
+            parensnumber = parensnumber * 60
+          elseif buffnumber ~= nil then
+            buffnumber = buffnumber * 60
+          end
+        elseif char == '(' and parensnumber == nil then
+          parensnumber = 0
         end
       end
-
-      if char == 'h' then
-        if parensnumber ~= nil then
-          parensnumber = parensnumber * 3600
-        elseif buffnumber ~= nil then
-          buffnumber = buffnumber * 3600
-        end
-      elseif char == 'm' then
-        if parensnumber ~= nil then
-          parensnumber = parensnumber * 60
-        elseif buffnumber ~= nil then
-          buffnumber = buffnumber * 60
-        end
-      elseif char == '(' and parensnumber == nil then
-        parensnumber = 0
-      end
-      ::continue::
     end
     return false
   end,
